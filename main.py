@@ -5,7 +5,15 @@ import webbrowser
 from gtts import gTTS 
 import playsound 
 import os 
-import subprocess as sp 
+import subprocess as sp
+
+def arya_voice(voice):
+    tts = gTTS(text=voice, lang ='en')
+    mp3_file = 'arya-' + str(random.randint(1,1000)) + '.mp3'
+    tts.save(mp3_file)
+    playsound.playsound(mp3_file)
+    print(voice)
+    os.remove(mp3_file)
 
 def get_user_speech():
     with sr.Microphone() as source:
@@ -18,15 +26,6 @@ def get_user_speech():
         except sr.RequestError:
             arya_voice('Sorry, my speech service seems to be offline.')
         return voice
-
-
-def arya_voice(voice):
-    tts = gTTS(text=voice, lang ='en')
-    mp3_file = 'arya-' + str(random.randint(1,1000)) + '.mp3'
-    tts.save(mp3_file)
-    playsound.playsound(mp3_file)
-    print(voice)
-    os.remove(mp3_file)
 
 def arya_response(voice):
     if 'what is your name' in voice or 'what\'s your name' in voice:
