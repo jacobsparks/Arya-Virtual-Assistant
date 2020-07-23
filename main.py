@@ -52,13 +52,13 @@ def arya_tasks(voice):
         os.system('start cmd /k ipconfig')
     if 'Aria text my phone' in voice:
         arya_voice('Will do. What would you like it to say?')
-        account_sid = 'AC2305d05ea331fb846dfb0e56b279eb4a'
-        auth_token = '87818234b0f3483f0be75eb7e86d0fde'
+        account_sid = '********************'
+        auth_token = '************************'
         client = Client(account_sid, auth_token)
         message = client.messages.create(
             from_='+13343784883',
             body=get_user_speech(),
-            to='+17066768585'
+            to='************'
         )
         arya_voice('Text successfully sent. What would you like me to do now?')
     if 'Aria let\'s play a number guessing game' in voice:
