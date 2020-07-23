@@ -1,19 +1,19 @@
-import speech_recognition as sr 
+import speech_recognition as sr #Use to get user speech
 import time 
-import random
-import webbrowser 
-from gtts import gTTS 
-import playsound 
-import os 
-import subprocess as sp
-from twilio.rest import Client
+import random #Use for mp3_file string & num guessing game
+import webbrowser
+from gtts import gTTS #Use to turn string into voice
+import playsound #use to play mp3_file
+import os #Use to exit program
+import subprocess as sp #Use for command line prompts
+from twilio.rest import Client #Use to send texts 
 
 def get_user_speech():
-    with sr.Microphone() as source:
-        audio = sr.Recognizer().listen(source)
+    with sr.Microphone() as source: 
+        audio = sr.Recognizer().listen(source) 
         voice = ''
         try:
-            voice = sr.Recognizer().recognize_google(audio)
+            voice = sr.Recognizer().recognize_google(audio) 
         except sr.UnknownValueError:
             arya_voice('Sorry, I didn\'t get that.')
         except sr.RequestError:
