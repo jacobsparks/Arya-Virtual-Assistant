@@ -6,14 +6,7 @@ from gtts import gTTS
 import playsound 
 import os 
 import subprocess as sp
-
-def arya_voice(voice):
-    tts = gTTS(text=voice, lang ='en')
-    mp3_file = 'arya-' + str(random.randint(1,1000)) + '.mp3'
-    tts.save(mp3_file)
-    playsound.playsound(mp3_file)
-    print(voice)
-    os.remove(mp3_file)
+from twilio.rest import Client
 
 def get_user_speech():
     with sr.Microphone() as source:
@@ -24,10 +17,19 @@ def get_user_speech():
         except sr.UnknownValueError:
             arya_voice('Sorry, I didn\'t get that.')
         except sr.RequestError:
-            arya_voice('Sorry, my speech service seems to be offline.')
+            arya_voice('Sorry, it seems as though I am offline.')
         return voice
 
-def arya_response(voice):
+
+def arya_voice(voice):
+    tts = gTTS(text=voice, lang ='en')
+    mp3_file = 'arya-' + str(random.randint(1,1000)) + '.mp3'
+    tts.save(mp3_file)
+    playsound.playsound(mp3_file)
+    print(voice)
+    os.remove(mp3_file)
+
+def arya_tasks(voice):
     if 'what is your name' in voice or 'what\'s your name' in voice:
         arya_voice('My name is Arya.')
     if 'Aria what time is it' in voice:
@@ -45,15 +47,42 @@ def arya_response(voice):
         location = get_user_speech()
         webbrowser.get().open('https://www.google.com/maps/search/' + location)
         arya_voice('Sure thing. Locating ' + location)
-    if 'Aria open command ipconfig' in voice:
-        arya_voice('Opening ipconfig')
+    if 'Aria run command ipconfig' in voice:
+        arya_voice('Running ipconfig')
         os.system('start cmd /k ipconfig')
+    if 'Aria text my phone' in voice:
+        arya_voice('Will do. What would you like it to say?')
+        account_sid = 'AC2305d05ea331fb846dfb0e56b279eb4a'
+        auth_token = '87818234b0f3483f0be75eb7e86d0fde'
+        client = Client(account_sid, auth_token)
+        message = client.messages.create(
+            from_='+13343784883',
+            body=get_user_speech(),
+            to='+17066768585'
+        )
+        arya_voice('Text successfully sent. What would you like me to do now?')
+    if 'Aria let\'s play a number guessing game' in voice:
+        arya_voice('Okay. Lets do it. You\'re going down! Pick a number between 1 and 20. You get 5 tries.')
+        num = random.randint(1, 20)
+        tries = 0
+        while tries < 5:
+            guess = get_user_speech()
+            tries = tries + 1
+            if int(guess) > num:
+                arya_voice('Nope. Too high.')
+            elif int(guess) < num:
+                arya_voice('Nope. Too low.')
+            else:
+                break
+        if int(guess) == num:
+            arya_voice('Congrats. You win. What else can I do for you?')
+        else:
+            arya_voice('You\'ve tried too many times. You lose! What else can I do for you?')
     if 'Aria exit' in voice:
         arya_voice('Goodbye.')
         exit()
 
-
-arya_voice('What can I do for you?')
+arya_voice('Hey! What can I do for you?')
 while True:
     voice = get_user_speech()
     arya_response(voice)
