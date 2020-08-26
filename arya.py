@@ -14,6 +14,8 @@ import os
 import subprocess as sp
 from subprocess import call
 from twilio.rest import Client
+from bs4 import BeautifulSoup
+import requests
 
 def arya_voice(voice): #translates string into arya's voice, saves to mp3, plays mp3, deletes mp3
     tts = gTTS(text=voice, lang ='en')
@@ -89,12 +91,34 @@ def arya_tasks(voice): #all of arya's functionality
         word = get_speech()
         new_word = word[1:] + word[0] + 'ay'
         arya_voice(word +' in pig latin is ' + new_word)
-
+    if 'Aria look up a stock price' in voice:
+        stock_scrape()
+        while True:
+            arya_voice('Do you want to lookup another ticker? Yes or no.')
+            decision = get_speech()
+            if 'yes' in decision:
+                stock_scrape()
+            else:
+                arya_voice('Okay. What would you like me to do now?')
+                break
     if 'Aria exit' in voice:
         arya_voice('Goodbye.')
         exit()
+    
+def stock_scrape():
+    arya_voice('What ticker do you want me to find?')
+    ticker = get_speech()
+    url = 'https://finance.yahoo.com/quote/' + ticker + '?p=' + ticker + '&.tsrc=fin-srch'
+    req = requests.get(url).text
+    soup = BeautifulSoup(req, 'html.parser' )
+    stock_price = soup.find('span', {'class':'Trsdu(0.3s) Fw(b) Fz(36px) Mb(-4px) D(ib)'}, {'data-reactid':'50'}).text
+    dollar = stock_price[:-3]
+    cents = stock_price[-2:]
+    arya_voice('The current price of ' + ticker + ' is ' + dollar + " dollars and " + cents + " cents.")
+
 
 arya_voice('Hey! What can I do for you?')
 while True: #loops program
     voice = get_speech()
+    # print(voice)
     arya_tasks(voice)
